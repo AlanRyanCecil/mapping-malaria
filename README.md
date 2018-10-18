@@ -1,1 +1,1 @@
-# mapping-malaria
+# Mapping Malaria
