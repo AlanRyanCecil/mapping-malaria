@@ -26,7 +26,7 @@ let xtrace1 = {
 
 var data = [trace1, trace2];
 
-d3.csv('data/xxxmalaria-prevalence-vs-gdp-per-capita.csv').then(data => {
+d3.csv('static/data/xxxmalaria-prevalence-vs-gdp-per-capita.csv').then(data => {
     console.log(Object.keys(data[0]));
     let topTen = years.map(y => {
         let currentYear = data.filter(d => d.Year == y);

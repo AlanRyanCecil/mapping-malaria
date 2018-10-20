@@ -8,8 +8,8 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 });
 
 
-var africa = 'json/africa_geo.json';
-let world_json = 'json/world.geojson';
+var africa = 'static/json/africa_geo.json';
+let world_json = 'static/json/world.geojson';
 var myCustomStyle = {
     stroke: false,
     color: '#000',

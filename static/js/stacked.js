@@ -74,7 +74,7 @@ function buildChart() {
 
 }
 
-d3.csv('data/xxxmalaria-prevalence-vs-gdp-per-capita.csv').then(data => {
+d3.csv('static/data/xxxmalaria-prevalence-vs-gdp-per-capita.csv').then(data => {
     let years = _.range(1990, 2017);
     console.log(Object.keys(data[0]));
     stackData = years.map(y => {
