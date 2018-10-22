@@ -105,6 +105,7 @@ venv.bak/
 
 # my additions
 .DS_Store
+*_nogit*
 Instructions/
 Unsolved/
 ExtraContent/
