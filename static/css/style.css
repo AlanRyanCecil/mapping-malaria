@@ -1,4 +1,25 @@
+.map-heading {
+    margin-top: 10vw;
+}
+
+hr {
+    border: 0.1em solid #333;
+}
+
+
 #world {
     height: 60vh;
-    width: 60vw;
+}
+
+#world-wide {
+}
+
+.line {
+  fill: none;
+  stroke: orange;
+  stroke-width: 2px;
+}
+
+.leaflet-container {
+    background-color: #E9E5D1;
 }

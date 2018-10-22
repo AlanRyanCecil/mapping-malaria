@@ -1,4 +1,3 @@
-// 1990 - 2016
 'use strict';
 
 let svgWidth, svgHeight, chartMargin,
@@ -9,28 +8,23 @@ let svgWidth, svgHeight, chartMargin,
     chartGroup = svg.append('g'),
     transTime = 1000;
 
+let cases = 'Malaria cases/100,000 pop. - wef_cm';
 
 let yearFormat = d3.timeFormat('%Y');
 
 function setXAxis() {
     xScale = d3.scaleTime()
-        .domain([new Date(1990, 1, 1), new Date(2016, 1, 1)])
+        .domain([new Date(2006, 1, 1), new Date(2014, 1, 1)])
         .range([0, chartWidth]);
     xAxis = d3.axisBottom(xScale);
 }
 
 function setYAxis() {
     yScale = d3.scaleLinear()
-        .domain(d3.extent(data, d => d['Malaria cases/100,000 pop. - wef_cm']))
+        .domain([0, 50000])//d3.max(stackData, d => d[cases])])
         .range([chartHeight, 0]);
     yAxis = d3.axisLeft(yScale);
 }
-
-let area = d3.area()
-    .curve(d3.curveStep)
-    .x(d => x(d.Year))
-    .y0(d => y(d['Malaria cases/100,000 pop. - wef_cm'][0]))
-    .y1(d => y(d['Malaria cases/100,000 pop. - wef_cm'][1]));
 
 function buildChart() {
     svgWidth = window.innerWidth * 0.8;
@@ -43,19 +37,19 @@ function buildChart() {
     setXAxis();
     setYAxis();
 
+    let area = d3.area()
+        // .curve(d3.curveStep)
+        .x(d => xScale(d.Year))
+        .y0(d => yScale(0))
+        .y1(d => yScale(d[cases]));
+
+    let line = d3.line()
+        .x(d => xScale(d.Year))
+        .y(d => yScale(d[cases]));
+
     chartGroup.selectAll('g, text').remove();
     chartGroup.attr('transform', `translate(${chartMargin}, ${chartMargin})`);
     svg.attr('width', svgWidth).attr('height', svgHeight);
-
-
-    chartGroup.append("g")
-        .selectAll("path")
-        .data(stackData)
-        .enter().append("path")
-        .attr("fill", '#00F')
-        .attr("d", ([, values]) => area(values))
-        .append("title")
-        .text(([name]) => name);
 
     chartGroup.append("g")
         .attr('transform', `translate(0, ${chartHeight})`)
@@ -64,26 +58,19 @@ function buildChart() {
     chartGroup.append("g")
         .call(yAxis);
 
-
-
-
-
-
-
-
-
+    let pathGroup = chartGroup.append('g');
+    stackData.forEach(x => {
+        pathGroup.append('path')
+            .datum(x.values)
+            .attr('d', area)
+            .attr('fill', 'blue');
+    });
 }
 
-d3.csv('static/data/xxxmalaria-prevalence-vs-gdp-per-capita.csv').then(data => {
-    let years = _.range(1990, 2017);
-    console.log(Object.keys(data[0]));
-    stackData = years.map(y => {
-        let currentYear = data.filter(d => d.Year == y);
-        currentYear.sort((a, b) => b['Malaria cases/100,000 pop. - wef_cm'] - a['Malaria cases/100,000 pop. - wef_cm']);
-        currentYear = currentYear.slice(0, 10);
-        return currentYear;
-    });
+d3.json('/top/5').then(data => {
+    console.log(data);
+    stackData = d3.nest()
+        .key(d => d.Entity)
+        .entries(data);
     buildChart();
 });
-
-window.addEventListener('resize', buildChart);
