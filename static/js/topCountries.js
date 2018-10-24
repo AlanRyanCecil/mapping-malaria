@@ -1,5 +1,6 @@
 'use strict';
 
+(function() {
 d3.json('/top/5').then(data => {
     let cases = 'Malaria cases/100,000 pop.';
     let plotData = [];
@@ -15,5 +16,13 @@ d3.json('/top/5').then(data => {
             type: 'scatter',
         });
     });
-    Plotly.newPlot('top-countries', plotData);
+    let layout = {
+        title: 'Highest Burden Countries',
+        titlefont: {
+            size: 32,
+        },
+    };
+
+    Plotly.newPlot('top-countries', plotData, layout);
 });
+})();

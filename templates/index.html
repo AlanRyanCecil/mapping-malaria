@@ -1,12 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
-    <hr>
-    <div id="world"></div>
-    <h1 class="map-heading">Malaria Cases World Wide</h1>
-    <hr>
-    <div id="world-wide"></div>
-    <h1 class="map-heading">Highest Burden Countries</h1>
-    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="world"></div>
+        </div>
+        <div id="year-controller" class="offset-3 col-md-6">
+            <div class="year-control">
+                <p class="year"> <span class="year-sel year-minus">-</span> <span class="year-display">2006</span> <span class="year-sel year-plus">+</span> </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="bar"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="gdp-scatter"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 plot-text">
+            <h3>There are high economic costs of malaria</h3>
+            <p>Okorosobo et al. (2013)10 estimate that the malaria “penalty” to GDP ranges from 0.41% of GDP in Ghana to 8.9% of GDP in Chad, all of which could be regained following elimination of malaria. Complete eradication of the disease would increase GDP in Uganda by 50 million USD.
+                
+            Azemar and Desbordes (2009)11 find that in the median sub-Saharan African country, foreign direct investment could increase by as much as one-third as a result of malaria and HIV eradication, slightly more than one-half of this is attributed to malaria.</p>
+        </div>
+    </div>
+    <div id="highest"></div>
+    <!-- <h1 class="map-heading"></h1> -->
+    <!-- <h1 class="map-heading">Highest Burden Countries</h1> -->
     <div id="top-countries"></div>
+    <div class="row">
+        <div id="world-wide-text" class="col-md-6 plot-text">
+            <h3>Malaria Cases World Wide</h3>
+            <p>In the visualisations below we provide estimates of the total number of deaths from the World Health Organization (WHO) from 2000 to 2015, and the Institute of Health Metrics and Evaluation (IHME), Global Burden of Disease (GBD) from 1990 to 2016. These estimates are notably different across various countries which affects the total number of reported deaths. IHME figures, as shown below, tend to be higher; they report deaths greater than 720,000 in 2015 versus only 438,000 from the WHO. Further information on the confidence intervals of WHO estimates, and a country-level comparison between these two sources is covered in our section on Data Quality & Definitions.</p>
+        </div>
+        <div id="world-wide" class="col-md-6"></div>
+    </div>
     <div id="stacked"></div>
+    <div class="row">{% for charity in charities %}
+        <a class="offset-1 col-md-5" href="{{ charity['link'] }}" target="_blank"><p>{{ charity['text'] }}</p></a>
+    {% endfor %}</div>
 {% endblock %}
