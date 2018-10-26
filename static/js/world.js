@@ -1,56 +1,46 @@
 'use strict';
-var drawWorld;
+
+var lightMap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.light',
+        accessToken: API_KEY
+    }),
+    drawWorld, geojson;
+
+lightMap.keep = true;
+
+var world = L.map('world', {
+    center: [3, 16.845402],
+    zoom: 2,
+    layers: [lightMap],
+});
+
 (function() {
 
     function hardCases(d) {
         return Math.ceil(d['Malaria cases/100,000 pop.'] * (d.Population / 100000));
     }
 
-
-    let lightMap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox.light',
-        accessToken: API_KEY
-    });
-
-    let world = L.map('world', {
-        center: [3, 16.845402],
-        zoom: 2,
-    });
-    var africa = 'static/json/africa_geo.json';
     let world_json = 'static/json/world.geojson';
-    var geoStyle = {
-        stroke: false,
-        color: '#000',
-        weight: 1,
-        fill: true,
-        fillColor: '#9FD341',
-        fillOpacity: 0.8
-    }
 
     function getValueProperty(feature, lookup) {
         try {
-            return hardCases(lookup[feature.properties.name].filter(x => x)[0]);
-            return lookup[feature.properties.name].filter(x => x)[0][cases];
+            let name = feature.properties.name;
+            name !== 'Ivory Coast' ? name : name = "Cote d'Ivoire";
+            return hardCases(lookup[name].filter(x => x)[0]);
         } catch (err) {
             return 0;
         }
     }
 
-    let capitals, flagLayer, geojson;
+    let capitals, flagLayer;
     let cases = 'Malaria cases/100,000 pop.';
 
     drawWorld = function() {
         let countryLookUp = {};
 
         d3.json(world_json).then(function(geoData) {
-            L.geoJson(geoData, {
-                style: geoStyle,
-            }).bindPopup(function(layer) {
-                return layer.feature.properties.name_long;
-            });
-
             d3.json('/malaria').then(response => {
                 let data = response.filter(d => d.Year === year);
                 let capitalMarkers = [];
@@ -91,21 +81,24 @@ var drawWorld;
 
                 geojson = L.choropleth(geoData, {
                     valueProperty: x => getValueProperty(x, countryLookUp),
-                    // scale: ["#07F", "#F00"],
-                    scale: ["#07F", "#F00"],
-                    steps: 16,
+                    scale: ["#39F", "#F00"],
+                    steps: 5,
                     mode: "q",
                     style: {
                         color: "#000",
                         weight: 0.5,
-                        fillOpacity: 0.7,
+                        fillOpacity: 0.5,
                     },
                     onEachFeature: function(feature, layer) {
-                        layer.bindPopup(
-                            `<h6>${feature.properties.name}</h6>
+                        let popup = L.popup({
+                                autoPan: false
+                            })
+                            .setContent(
+                                `<h6>${feature.properties.name}</h6>
                         <hr class="pophr">
-                        <h6>Cases: ${formatThousands(getValueProperty(feature, countryLookUp))}</h6>`
-                        );
+                        <h6>recorded cases: ${formatThousands(getValueProperty(feature, countryLookUp))}</h6>`
+                            );
+                        layer.bindPopup(popup);
                         layer.on('mouseover', function(event) {
                             this.openPopup();
                             this.getPopup().setLatLng(event.latlng);
@@ -116,58 +109,23 @@ var drawWorld;
                         layer.on('mouseout', function(event) {
                             this.closePopup();
                             this.setStyle({
-                                fillOpacity: 0.7
+                                fillOpacity: 0.5
                             });
                         });
                         layer.on('click', function(event) {
-                            world.fitBounds(this.getBounds());
+                            world.flyToBounds(this.getBounds());
                         });
                     }
                 });
-                let flagList = [];
-                d3.json('/top/10').then(response => {
-                    let cases = 'Malaria cases/100,000 pop.';
-                    let flagData = response.filter(d => d.Year === year).slice(0, 5);
-                    flagData.forEach(x => {
-                        let code = x['Country Code'].slice(0, 2).toLowerCase();
-                        let latlng = L.latLng(
-                            x['Latitude Number'],
-                            x['Longitude Number']
-                        );
-
-                        let flag = L.icon({
-                            iconUrl: `../static/images/flags/${code}.png`,
-                            iconSize: [32, 32],
-                        });
-                        flagList.push(
-                            L.marker(latlng, {
-                                icon: flag,
-                            })
-                        );
-                    });
-                });
-                flagLayer = L.layerGroup(flagList);
-
                 world.eachLayer(function(layer) {
-                    world.removeLayer(layer);
+                    if (!layer.keep) {
+                        world.removeLayer(layer);
+                    }
                 });
                 world.addLayer(geojson);
-                // world.addLayer(capitals);
-                // world.addLayer(flagList);
             });
         });
     }
+
     drawWorld();
-    // d3.select('.year-minus').on('click', drawMap);
-    // d3.select('.year-plus').on('click', drawMap);
-    // let baseMaps = {
-    //     geojson: geojson,
-    // };
-    // let overlayMaps = {
-    //     Capitals: capitals,
-    // };
-    // let control = L.control.layers(baseMaps, overlayMaps, {
-    //     collapsed: false,
-    //     position: 'bottomright',
-    // }).addTo(world);
 })();

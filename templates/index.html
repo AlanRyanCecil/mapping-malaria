@@ -1,42 +1,66 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
-            <div id="world"></div>
-        </div>
-        <div id="year-controller" class="offset-3 col-md-6">
-            <div class="year-control">
-                <p class="year"> <span class="year-sel year-minus">-</span> <span class="year-display">2006</span> <span class="year-sel year-plus">+</span> </p>
+        <div id="year-controller" class="offset-4 col-md-4">
+            <div class="row">
+                <p class="year-sel year-minus col-md-4">
+                    <i class="material-icons">arrow_left</i>
+                </p>
+                <p id="year-display" class="year-sel col-md-4">2006</p>
+                <p class="year-sel year-plus col-md-4">
+                    <i class="material-icons">arrow_right</i>
+                </p>
             </div>
         </div>
         <div class="col-md-6">
-            <div id="bar"></div>
+            <h3 id="map-title">Malaria Cases per 100,000 Population</h3>
+            <div id="world"></div>
         </div>
         <div class="col-md-6">
+            <div id="bar-chart"></div>
+        </div>
+        <div class="col-md-12">
             <div id="gdp-scatter"></div>
         </div>
     </div>
+    <div id="highest"></div>
     <div class="row">
-        <div class="col-md-6 plot-text">
-            <h3>There are high economic costs of malaria</h3>
-            <p>Okorosobo et al. (2013)10 estimate that the malaria “penalty” to GDP ranges from 0.41% of GDP in Ghana to 8.9% of GDP in Chad, all of which could be regained following elimination of malaria. Complete eradication of the disease would increase GDP in Uganda by 50 million USD.
-                
-            Azemar and Desbordes (2009)11 find that in the median sub-Saharan African country, foreign direct investment could increase by as much as one-third as a result of malaria and HIV eradication, slightly more than one-half of this is attributed to malaria.</p>
+        <div class="col-md-4 plot-text">
+            <h3>Economic Costs of Malaria</h3>
+            <p>Malaria “penalty” to GDP ranges from 0.41% of GDP in Ghana to 8.9% of GDP in Chad, all of which could be regained following elimination of malaria. Complete eradication of diseases would increase GDP in Uganda by 50M USD. Azemar and Desbordes find that in the median sub-Saharan African county, foreign direct investments could increase by as much as one-third as a result of malaria and HIV eradication, slightly more than one-half of this is attributed to malaria.</p>
+        </div>
+        <div class="col-md-8">
+            <div id="top-countries"></div>
         </div>
     </div>
-    <div id="highest"></div>
-    <!-- <h1 class="map-heading"></h1> -->
-    <!-- <h1 class="map-heading">Highest Burden Countries</h1> -->
-    <div id="top-countries"></div>
     <div class="row">
+        <div id="world-wide" class="col-md-6"></div>
         <div id="world-wide-text" class="col-md-6 plot-text">
             <h3>Malaria Cases World Wide</h3>
-            <p>In the visualisations below we provide estimates of the total number of deaths from the World Health Organization (WHO) from 2000 to 2015, and the Institute of Health Metrics and Evaluation (IHME), Global Burden of Disease (GBD) from 1990 to 2016. These estimates are notably different across various countries which affects the total number of reported deaths. IHME figures, as shown below, tend to be higher; they report deaths greater than 720,000 in 2015 versus only 438,000 from the WHO. Further information on the confidence intervals of WHO estimates, and a country-level comparison between these two sources is covered in our section on Data Quality & Definitions.</p>
+            <p>Nearly half of the world's population is at risk of contracting malaria. In 2015, there were roughly 212 million malaria cases and an estimated 429,000 malaria deaths. Increased prevention and control measures have led to a 29% reduction in malaria mortality rates globally since 2010.</p>
         </div>
-        <div id="world-wide" class="col-md-6"></div>
     </div>
-    <div id="stacked"></div>
-    <div class="row">{% for charity in charities %}
-        <a class="offset-1 col-md-5" href="{{ charity['link'] }}" target="_blank"><p>{{ charity['text'] }}</p></a>
-    {% endfor %}</div>
+    <br id="charity-list">
+    <!--     <h3 class="section-heading">Give Well</h3>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>High impact giving opportunities that are supported by in-depth charity research</h3>
+            <p>GiveWell is a nonprofit dedicated to finding outstanding giving opportunities through in-depth analysis. Thousands of hours of research have gone into finding our top-rated charities. They’re evidence-backed, thoroughly vetted, and underfunded.<a href="https://www.givewell.org" target="_blank" class="btn btn-info text-btn">Learn More</a></p>
+        </div>
+    </div>
+    -->    <h3 class="section-heading">International NGOs Fighting Malaria
+    <a class="learn-btn btn btn-info" target="_blank" href="https://www.raptim.org/11-international-ngos-fighting-malaria/">Learn More</a>
+    </h3>
+    <hr>
+    <div class="row">
+        <div class="row col-md-12">
+            {% for charity in charities %}
+                <a class="col-md-6" href="{{ charity['link'] }}" target="_blank"><p>{{ charity['text'] }}</p></a>
+            {% endfor %}
+        </div>
+        <div class="col-md-6">
+            <p></p>
+        </div>
+    </div>
 {% endblock %}
